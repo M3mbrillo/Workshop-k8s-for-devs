@@ -1,0 +1,6 @@
+@MoonlyBird.Poll.Admin_HostAddress = http://localhost:5201
+
+GET {{MoonlyBird.Poll.Admin_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
