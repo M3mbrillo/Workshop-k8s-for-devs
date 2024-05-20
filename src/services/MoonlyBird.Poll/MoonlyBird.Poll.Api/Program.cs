@@ -1,7 +1,6 @@
+using MoonlyBird.Poll.Api.Util;
 
-using Microsoft.EntityFrameworkCore;
-
-namespace MoonlyBird.Poll.Admin;
+namespace MoonlyBird.Poll.Api;
 
 public class Program
 {
@@ -10,11 +9,11 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddDbContext<Database.DbMoonlyBirdPollContext>(
-            opt => 
-                opt.UseSqlServer(builder.Configuration.GetConnectionString("MoonlyBirdPoll")));
-        
+
         builder.Services.AddControllers();
+
+        builder.Services.AddHttpClient<PollAdminClient>(client => client.BaseAddress = new Uri(uriString: builder.Configuration.GetValue<string>("UrlPollAdmin") ?? throw new Exception("Dont exist config UrlPollAdmin into appsetting.json")));
+        
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -22,14 +21,17 @@ public class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        app.UseSwagger();
-        app.UseSwaggerUI();
-        
+        // if (app.Environment.IsDevelopment())
+        // {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        // }
 
         app.UseHttpsRedirection();
 
-        // app.UseAuthorization();
-        
+        app.UseAuthorization();
+
+
         app.MapControllers();
 
         app.Run();

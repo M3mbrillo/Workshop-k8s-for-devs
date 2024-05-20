@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug-pod
+spec:
+  restartPolicy: Never
+  containers:
+    - name: debug-container
+      image: m3mbrillo/poll-admin:lasted
+      envFrom:
+        - configMapRef:
+            name: moonly-pool-config-admin
+        - secretRef:
+            name: moonly-poll-secret
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      command: ["/bin/sh"]
+      stdin: true
+      tty: true
+  

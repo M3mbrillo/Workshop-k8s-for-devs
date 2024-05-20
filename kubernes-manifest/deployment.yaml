@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moonly-poll
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: moonly-poll
+  template:
+    metadata:
+      labels:
+        app: moonly-poll
+    spec:
+      containers:
+      - name: moonly-poll-api
+        image: m3mbrillo/poll-api:lasted
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: 80
+            name: admin-api
+        env:
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "80"
+          - name: URL_POLL_ADMIN
+            value: "http://localhost:90/"
+      - name: moonly-poll-admin
+        image: m3mbrillo/poll-admin:lasted
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: 90
+            name: admin-port
+        env:
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "90"
+        envFrom:
+          - configMapRef:
+              name: moonly-pool-config-admin
+          - secretRef:
+              name: moonly-poll-secret
+        command: ["/bin/sh", "-c"]        
+        args:
+          - > 
+            export DB_PASSWORD=$(echo -n $DB_PASSWORD | tr -d '\n');
+            export CONNECTION_STRING="${CONNECTION_STRING};Password=${DB_PASSWORD}";
+            exec /etc/entrypoint.sh

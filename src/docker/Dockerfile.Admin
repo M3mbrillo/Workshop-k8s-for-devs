@@ -1,0 +1,24 @@
+# https://hub.docker.com/_/microsoft-dotnet
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /source
+
+COPY services/MoonlyBird.Poll/MoonlyBird.Poll.Admin/MoonlyBird.Poll.Admin.csproj ./MoonlyBird.Poll.Admin.csproj
+RUN dotnet restore
+
+COPY services/MoonlyBird.Poll/MoonlyBird.Poll.Admin/. ./
+RUN dotnet build MoonlyBird.Poll.Admin.csproj --nologo --configuration Release --no-restore
+
+# final stage/image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+RUN apt update && apt install -y gettext dos2unix
+
+WORKDIR /app
+COPY --from=build /source/bin/Release/net8.0/. ./
+RUN rm -rf appsettings.json
+COPY ./docker/Admin/appsettings.json.template ./appsettings.json.template
+
+COPY ./docker/Admin/entrypoint.sh /etc/entrypoint.sh
+RUN dos2unix /etc/entrypoint.sh
+RUN chmod a+x /etc/entrypoint.sh
+
+ENTRYPOINT ["/etc/entrypoint.sh"]

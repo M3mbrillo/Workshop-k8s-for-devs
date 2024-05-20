@@ -1,0 +1,10 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "UrlPollAdmin": "${URL_POLL_ADMIN}",
+  "AllowedHosts": "*"
+}

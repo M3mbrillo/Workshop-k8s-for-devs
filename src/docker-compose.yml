@@ -1,0 +1,24 @@
+version: '3.1'
+
+
+services:
+  admin:
+    image: m3mbrillo/poll-admin:lasted
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.Admin
+    environment:
+      - CONNECTION_STRING=${CONNECTION_STRING}
+      - ASPNETCORE_HTTP_PORTS=80
+    ports:
+      - "8010:80"
+  
+  public-api:
+    image: m3mbrillo/poll-api:lasted
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.Api
+    environment:
+      - URL_POLL_ADMIN=${URL_POLL_ADMIN}
+    ports:
+      - "8020:8080"
