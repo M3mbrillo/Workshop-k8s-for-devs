@@ -13,6 +13,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: moonly-poll-api-service
+                name: moonly-poll-service
                 port:
                   number: 80

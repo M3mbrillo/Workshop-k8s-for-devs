@@ -35,6 +35,18 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
+        
+        # The kubelet uses liveness probes to know when to restart a container
+        # livenessProbe:
+          
+        #Checks if the application is ready to receive traffic.
+        readinessProbe:
+          httpGet:
+            path: /Healthz
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
         ports:
           - containerPort: 90
             name: admin-port
